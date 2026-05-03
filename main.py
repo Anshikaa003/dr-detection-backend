@@ -1,4 +1,5 @@
 import io
+import os
 import base64
 import logging
 from typing import Optional
@@ -73,16 +74,38 @@ transform = T.Compose([
 # ── Load Model ────────────────────────────────────────────────────────────────
 model = None
 
+def download_model_if_needed():
+    """Download model from Google Drive if not present locally."""
+    if os.path.exists(CHECKPOINT_PATH):
+        logger.info("✅ Model file already exists.")
+        return
+    
+    FILE_ID = "1v9qt0UFsIj7PgkDAjzetVR7Z9mYeVLTy"  # ← paste your Google Drive file ID
+    
+    logger.info("⬇️  Downloading model from Google Drive...")
+    os.makedirs("artifacts", exist_ok=True)
+    
+    url = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
+    
+    import urllib.request
+    try:
+        urllib.request.urlretrieve(url, CHECKPOINT_PATH)
+        logger.info("✅ Model downloaded successfully!")
+    except Exception as e:
+        logger.error("❌ Download failed: %s", str(e))
+
+
 def load_model():
     global model
+    download_model_if_needed()
     try:
         model = load_mobilenet_model(CHECKPOINT_PATH, num_classes=5)
         logger.info("✅ MobileNetV3 model loaded from %s", CHECKPOINT_PATH)
     except FileNotFoundError:
-        logger.warning("⚠️  %s not found. Running in DEMO mode.", CHECKPOINT_PATH)
+        logger.warning("⚠️  Model not found. Running in DEMO mode.")
         model = None
     except RuntimeError as e:
-        logger.error("❌ Model load failed (shape mismatch?): %s", str(e))
+        logger.error("❌ Model load failed: %s", str(e))
         model = None
 
 @app.on_event("startup")
