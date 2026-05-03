@@ -1,20 +1,13 @@
-# ── Core ──────────────────────────────────────────────────────────────────────
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
 python-multipart==0.0.9
 pydantic==2.7.1
-
-# ── ML / DL ───────────────────────────────────────────────────────────────────
+torch==2.9.1+cpu
+torchvision==0.20.1+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.2.1+cpu
-torchvision==0.17.1+cpu
 lightning==2.2.1
 torchmetrics==1.2.0
-
-# ── Image processing ──────────────────────────────────────────────────────────
 Pillow==10.2.0
 numpy==1.26.2
 opencv-python-headless==4.9.0.80
-
-# ── Optional (backbone) ───────────────────────────────────────────────────────
 timm==0.9.16
